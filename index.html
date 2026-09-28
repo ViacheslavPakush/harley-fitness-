@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <title>HARLEY — Leg Day</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+  <!-- ========== WELCOME SCREEN ========== -->
+  <div id="screen-welcome" class="screen active">
+    <div class="welcome-wrapper">
+      <div class="logo-area">
+        <div class="logo-icon">🏋️</div>
+        <p class="logo-sub">LEG DAY PROTOCOL</p>
+      </div>
+
+      <div class="welcome-text">
+        <h1 class="greeting">Welcome back,</h1>
+        <h1 class="username">HARLEY!</h1>
+        <p class="subtitle">Today's mission: <strong>Hamstrings & Glutes</strong></p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-value">3</span>
+          <span class="stat-label">Exercises</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">30</span>
+          <span class="stat-label">Minutes</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">10</span>
+          <span class="stat-label">Sets Total</span>
+        </div>
+      </div>
+
+      <button id="btn-start" class="btn-primary pulse-glow" onclick="startWorkout()">
+        START LEGS 🏋️‍♂️
+      </button>
+
+      <p class="ready-text">Are you ready to push your limits?</p>
+    </div>
+  </div>
+
+  <!-- ========== ACTIVE TRAINING SCREEN ========== -->
+  <div id="screen-training" class="screen">
+
+    <!-- Sticky Header -->
+    <div class="sticky-header">
+      <div class="timer-block">
+        <span class="timer-label">TIME LEFT</span>
+        <span id="timer-display" class="timer-value">30:00</span>
+      </div>
+      <div class="progress-block">
+        <span class="progress-label">EXERCISE</span>
+        <span id="step-indicator" class="progress-value">1 / 3</span>
+      </div>
+    </div>
+
+    <!-- Warning Banner -->
+    <div class="warning-banner">
+      🛑 <strong>STOP REFLEXES:</strong> No arms, no neck, no abs.
+      Focus 100% on your <span class="highlight-text">hamstrings/glutes!</span>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-wrapper">
+      <div id="progress-bar" class="progress-bar" style="width: 33%"></div>
+    </div>
+
+    <!-- ===== STEP 1 ===== -->
+    <div id="step-1" class="exercise-card active-step">
+      <div class="exercise-header">
+        <div class="step-badge">01</div>
+        <div class="exercise-title-block">
+          <h2 class="exercise-name">Single-Leg Glute Bridge</h2>
+          <span class="exercise-tag">Glutes · Hamstrings</span>
+        </div>
+      </div>
+
+      <div class="exercise-desc">
+        <p>4 sets of <strong>12–15 reps</strong>. Place your heel further from your pelvis to maximize hamstring engagement.</p>
+      </div>
+
+      <div class="sets-container">
+        <div class="set-item" id="s1-set1">
+          <label class="set-label">
+            <input type="checkbox" class="set-checkbox" data-step="1" onchange="checkSets(1)" />
+            <span class="checkmark"></span>
+            <span class="set-text">Set 1 — 12–15 reps</span>
+          </label>
+          <span class="set-status">⏳</span>
+        </div>
+        <div class="set-item" id="s1-set2">
+          <label class="set-label">
+            <input type="checkbox" class="set-checkbox" data-step="1" onchange="checkSets(1)" />
+            <span class="checkmark"></span>
+            <span class="set-text">Set 2 — 12–15 reps</span>
+          </label>
+          <span class="set-status">⏳</span>
+        </div>
+        <div class="set-item" id="s1-set3">
+          <label class="set-label">
+            <input type="checkbox" class="set-checkbox" data-step="1" onchange="checkSets(1)" />
+            <span class="checkmark"></span>
+            <span class="set-text">Set 3 — 12–15 reps</span>
+          </label>
+          <span class="set-status">⏳</span>
+        </div>
+        <div class="set-item" id="s1-set4">
+          <label class="set-label">
+            <input type="checkbox" class="set-checkbox" data-step="1" onchange="checkSets(1)" />
+            <span class="checkmark"></span>
+            <span class="set-text">Set 4 — 12–15 reps</span>
+          </label>
+          <span class="set-status">⏳</span>
+        </div>
+      </div>
+
+      <button id="btn-next-1" class="btn-next" disabled onclick="goToStep(2)">
+        NEXT EXERCISE ➡️
+      </button>
+    </div>
+
+    <!-- ===== STEP 2 ===== -->
+    <div id="step-2" class="exercise-card hidden-step">
+      <div class="exercise-header">
+        <div class="step-badge">02</div>
+        <div class="exercise-title-block">
+          <h2 class="exercise-name">Single-Leg Romanian Deadlift</h2>
+          <span class="exercise-tag">Hamstrings · Balance</span>
+        </div>
+      </div>
+
+      <div class="exercise-desc">
+        <p>3 sets of <strong>12 reps</strong>. Keep your back flat, stretch the hamstring, and control the movement.</p>
+      </div>
+
+      <div class="sets-container">
+        <div class="set-item" id="s2-set1">
+          <label class="set-label">
+            <input type="checkbox" class="set-checkbox" data-step="2" onchange="checkSets(2)" />
+            <span class="checkmark"></span>
+            <span class="set-text">Set 1 — 12 reps</span>
+          </label>
+          <span class="set-status">⏳</span>
+        </div>
+        <div class="set-item" id="s2-set2">
+          <label class="set-label">
+            <input type="checkbox" class="set-checkbox" data-step="2" onchange="checkSets(2)" />
+            <span class="checkmark"></span>
+            <span class="set-text">Set 2 — 12 reps</span>
+          </label>
+          <span class="set-status">⏳</span>
+        </div>
+        <div class="set-item" id="s2-set3">
+          <label class="set-label">
+            <input type="checkbox" class="set-checkbox" data-step="2" onchange="checkSets(2)" />
+            <span class="checkmark"></span>
+            <span class="set-text">Set 3 — 12 reps</span>
+          </label>
+          <span class="set-status">⏳</span>
+        </div>
+      </div>
+
+      <button id="btn-next-2" class="btn-next" disabled onclick="goToStep(3)">
+        NEXT EXERCISE ➡️
+      </button>
+    </div>
+
+    <!-- ===== STEP 3 ===== -->
+    <div id="step-3" class="exercise-card hidden-step">
+      <div class="exercise-header">
+        <div class="step-badge">03</div>
+        <div class="exercise-title-block">
+          <h2 class="exercise-name">Bulgarian Split Squats</h2>
+          <span class="exercise-tag">Glutes · Quads · Hamstrings</span>
+        </div>
+      </div>
+
+      <div class="exercise-desc">
+        <p>3 sets of <strong>10–12 reps per leg</strong>. Lean your torso slightly forward, drive your hips back to shift load to the glutes and hamstrings.</p>
+      </div>
+
+      <div class="sets-container">
+        <div class="set-item" id="s3-set1">
+          <label class="set-label">
+            <input type="checkbox" class="set-checkbox" data-step="3" onchange="checkSets(3)" />
+            <span class="checkmark"></span>
+            <span class="set-text">Set 1 — 10–12 reps/leg</span>
+          </label>
+          <span class="set-status">⏳</span>
+        </div>
+        <div class="set-item" id="s3-set2">
+          <label class="set-label">
+            <input type="checkbox" class="set-checkbox" data-step="3" onchange="checkSets(3)" />
+            <span class="checkmark"></span>
+            <span class="set-text">Set 2 — 10–12 reps/leg</span>
+          </label>
+          <span class="set-status">⏳</span>
+        </div>
+        <div class="set-item" id="s3-set3">
+          <label class="set-label">
+            <input type="checkbox" class="set-checkbox" data-step="3" onchange="checkSets(3)" />
+            <span class="checkmark"></span>
+            <span class="set-text">Set 3 — 10–12 reps/leg</span>
+          </label>
+          <span class="set-status">⏳</span>
+        </div>
+      </div>
+
+      <button id="btn-finish" class="btn-finish" disabled onclick="finishWorkout()">
+        FINISH WORKOUT 🏁
+      </button>
+    </div>
+
+  </div><!-- end screen-training -->
+
+  <!-- ========== FINISH SCREEN ========== -->
+  <div id="screen-finish" class="screen">
+    <div class="finish-wrapper">
+      <div class="finish-trophy">🏆</div>
+      <h1 class="finish-title">MISSION<br/>ACCOMPLISHED!</h1>
+      <p class="finish-name">HARLEY</p>
+
+      <div class="finish-stats">
+        <div class="finish-stat">
+          <span id="finish-time" class="finish-stat-value">—</span>
+          <span class="finish-stat-label">Minutes</span>
+        </div>
+        <div class="finish-stat">
+          <span class="finish-stat-value">3</span>
+          <span class="finish-stat-label">Exercises</span>
+        </div>
+        <div class="finish-stat">
+          <span class="finish-stat-value">10</span>
+          <span class="finish-stat-label">Sets Done</span>
+        </div>
+      </div>
+
+      <div class="finish-message">
+        <p>Your leg muscles are fueled. 💪</p>
+        <div class="finish-tips">
+          <div class="tip-item">💧 Drink water now</div>
+          <div class="tip-item">🥩 Eat your protein</div>
+          <div class="tip-item">😴 Rest & recover</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="resetApp()">
+        🔄 NEW SESSION
+      </button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
