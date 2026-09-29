@@ -150,7 +150,7 @@ function showGifOverlay(stepNum, callback) {
     callback();
   }
 
-  STATE.overlayTimeout = setTimeout(closeOverlay, 5000);
+  STATE.overlayTimeout = setTimeout(closeOverlay, 15000);
   overlay.addEventListener('click', closeOverlay);
 }
 
