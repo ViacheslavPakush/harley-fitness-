@@ -13,7 +13,7 @@ const STATE = {
   overlayTimeout:  null,
 };
 
-// ── Дані вправ з GIF ───────────────────────
+// ── Дані вправ з відео ─────────────────────
 const EXERCISES = {
   1: {
     name:  'Присід на п\'яти з колін',
@@ -74,36 +74,57 @@ function vibrate(pattern) {
   if (navigator.vibrate) navigator.vibrate(pattern);
 }
 
-// ── GIF Overlay ────────────────────────────
+// ── Video Overlay ──────────────────────────
 function showGifOverlay(stepNum, callback) {
   const ex       = EXERCISES[stepNum];
   const overlay  = document.getElementById('gif-overlay');
   const nameEl   = document.getElementById('overlay-exercise-name');
-  const imgEl    = document.getElementById('overlay-gif');
   const fallback = document.getElementById('overlay-fallback');
   const emojiEl  = document.getElementById('overlay-emoji');
   const descEl   = document.getElementById('overlay-desc');
   const bar      = document.getElementById('overlay-timer-bar');
+  const imgWrap  = document.querySelector('.gif-overlay-img-wrap');
+
+  // Видаляємо старе відео якщо є
+  const oldVideo = document.getElementById('overlay-video');
+  if (oldVideo) oldVideo.remove();
+
+  // Створюємо відео елемент
+  const video = document.createElement('video');
+  video.id              = 'overlay-video';
+  video.className       = 'gif-overlay-img';
+  video.src             = ex.video;
+  video.autoplay        = true;
+  video.loop            = true;
+  video.muted           = true;
+  video.playsInline     = true;
+  video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
+
+  // Fallback якщо відео не завантажилось
+  video.onerror = () => {
+    video.style.display = 'none';
+    emojiEl.textContent = ex.emoji;
+    descEl.textContent  = ex.desc;
+    fallback.classList.remove('hidden');
+  };
+
+  video.onloadeddata = () => {
+    fallback.classList.add('hidden');
+    video.play().catch(() => {
+      video.style.display = 'none';
+      fallback.classList.remove('hidden');
+    });
+  };
 
   // Заповнюємо дані
   nameEl.textContent  = ex.name;
   emojiEl.textContent = ex.emoji;
   descEl.textContent  = ex.desc;
 
-  // Скидаємо стан
-  imgEl.style.display    = 'block';
+  // Вставляємо відео перед fallback
   fallback.classList.add('hidden');
-
-  // Завантажуємо GIF
-  imgEl.onload = () => {
-    fallback.classList.add('hidden');
-    imgEl.style.display = 'block';
-  };
-  imgEl.onerror = () => {
-    imgEl.style.display = 'none';
-    fallback.classList.remove('hidden');
-  };
-  imgEl.src = ex.gif;
+  imgWrap.insertBefore(video, fallback);
 
   // Показуємо оверлей
   overlay.classList.remove('hidden');
@@ -124,7 +145,8 @@ function showGifOverlay(stepNum, callback) {
     clearTimeout(STATE.overlayTimeout);
     overlay.removeEventListener('click', closeOverlay);
     overlay.classList.add('hidden');
-    imgEl.src = ''; // зупиняємо GIF
+    video.pause();
+    video.remove();
     callback();
   }
 
@@ -210,7 +232,6 @@ function startWorkout() {
   vibrate([50, 30, 50]);
   showScreen('screen-training');
   startTimer();
-  // Показуємо GIF першої вправи
   showGifOverlay(1, () => goToStep(1));
 }
 
@@ -237,7 +258,7 @@ function goToStep(stepNum) {
   vibrate(30);
 }
 
-// ── Кнопка "Наступна вправа" з GIF ─────────
+// ── Наступна вправа з відео ────────────────
 function goToNextWithGif(nextStep) {
   showGifOverlay(nextStep, () => goToStep(nextStep));
 }
