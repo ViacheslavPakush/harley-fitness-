@@ -1,15 +1,50 @@
 /* ============================================
-   HARLEY FITNESS TRACKER — app.js v2.0
+   HARLEY FITNESS TRACKER — app.js v3.0
    ============================================ */
 
 const STATE = {
-  timerInterval: null,
-  totalSeconds:  30 * 60,
-  secondsLeft:   30 * 60,
-  startTime:     null,
-  currentStep:   1,
-  finished:      false,
-  totalSteps:    5,
+  timerInterval:   null,
+  totalSeconds:    35 * 60,
+  secondsLeft:     35 * 60,
+  startTime:       null,
+  currentStep:     1,
+  finished:        false,
+  totalSteps:      5,
+  overlayTimeout:  null,
+};
+
+// ── Дані вправ з GIF ───────────────────────
+const EXERCISES = {
+  1: {
+    name:  'Присід на п\'яти з колін',
+    emoji: '🧎',
+    desc:  'Стань на коліна → сідай на п\'яти → повертайся вгору',
+    gif:   'https://i.imgur.com/LmVxS5V.gif',
+  },
+  2: {
+    name:  'Румунська тяга',
+    emoji: '🏋️',
+    desc:  'Спина рівна → нахил вперед → розтяг стегна → повернення',
+    gif:   'https://i.imgur.com/8Yk3mAn.gif',
+  },
+  3: {
+    name:  'Болгарські присідання',
+    emoji: '🦵',
+    desc:  'Задня нога на лаві → присід → коліно не виходить за носок',
+    gif:   'https://i.imgur.com/QwZXkPl.gif',
+  },
+  4: {
+    name:  'Випади',
+    emoji: '🚶',
+    desc:  'Крок вперед → коліно до підлоги → повернення → інша нога',
+    gif:   'https://i.imgur.com/RtNpKjH.gif',
+  },
+  5: {
+    name:  'Міст з опором',
+    emoji: '🌉',
+    desc:  'Ляж на спину → стопи на підлозі → підніми таз → стисни сідниці',
+    gif:   'https://i.imgur.com/VxKpLmN.gif',
+  },
 };
 
 // ── Telegram Init ──────────────────────────
@@ -39,14 +74,72 @@ function vibrate(pattern) {
   if (navigator.vibrate) navigator.vibrate(pattern);
 }
 
+// ── GIF Overlay ────────────────────────────
+function showGifOverlay(stepNum, callback) {
+  const ex       = EXERCISES[stepNum];
+  const overlay  = document.getElementById('gif-overlay');
+  const nameEl   = document.getElementById('overlay-exercise-name');
+  const imgEl    = document.getElementById('overlay-gif');
+  const fallback = document.getElementById('overlay-fallback');
+  const emojiEl  = document.getElementById('overlay-emoji');
+  const descEl   = document.getElementById('overlay-desc');
+  const bar      = document.getElementById('overlay-timer-bar');
+
+  // Заповнюємо дані
+  nameEl.textContent  = ex.name;
+  emojiEl.textContent = ex.emoji;
+  descEl.textContent  = ex.desc;
+
+  // Скидаємо стан
+  imgEl.style.display    = 'block';
+  fallback.classList.add('hidden');
+
+  // Завантажуємо GIF
+  imgEl.onload = () => {
+    fallback.classList.add('hidden');
+    imgEl.style.display = 'block';
+  };
+  imgEl.onerror = () => {
+    imgEl.style.display = 'none';
+    fallback.classList.remove('hidden');
+  };
+  imgEl.src = ex.gif;
+
+  // Показуємо оверлей
+  overlay.classList.remove('hidden');
+
+  // Таймер-бар на 5 секунд
+  bar.style.transition = 'none';
+  bar.style.transform  = 'scaleX(1)';
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      bar.style.transition = 'transform 5s linear';
+      bar.style.transform  = 'scaleX(0)';
+    });
+  });
+
+  // Закрити через 5 сек або по тапу
+  function closeOverlay() {
+    clearTimeout(STATE.overlayTimeout);
+    overlay.removeEventListener('click', closeOverlay);
+    overlay.classList.add('hidden');
+    imgEl.src = ''; // зупиняємо GIF
+    callback();
+  }
+
+  STATE.overlayTimeout = setTimeout(closeOverlay, 5000);
+  overlay.addEventListener('click', closeOverlay);
+}
+
 // ── Звук фінішу ────────────────────────────
 function playFinishSound() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const signals = [
-      { freq: 523, start: 0,    duration: 0.3 },
-      { freq: 659, start: 0.4,  duration: 0.3 },
-      { freq: 784, start: 0.8,  duration: 0.3 },
+      { freq: 523,  start: 0,   duration: 0.3 },
+      { freq: 659,  start: 0.4, duration: 0.3 },
+      { freq: 784,  start: 0.8, duration: 0.3 },
       { freq: 1047, start: 1.2, duration: 0.8 },
     ];
     signals.forEach(({ freq, start, duration }) => {
@@ -62,9 +155,7 @@ function playFinishSound() {
       osc.start(ctx.currentTime + start);
       osc.stop(ctx.currentTime + start + duration + 0.1);
     });
-  } catch (e) {
-    console.log('Звук недоступний:', e);
-  }
+  } catch (e) {}
 }
 
 // ── Звук чекбокса ──────────────────────────
@@ -100,11 +191,7 @@ function startTimer() {
 
     if (STATE.secondsLeft <= 0) {
       clearInterval(STATE.timerInterval);
-      if (!STATE.finished) {
-        playFinishSound();
-        vibrate([200, 100, 200, 100, 400]);
-        finishWorkout(true);
-      }
+      if (!STATE.finished) finishWorkout(true);
     }
   }, 1000);
 }
@@ -123,7 +210,8 @@ function startWorkout() {
   vibrate([50, 30, 50]);
   showScreen('screen-training');
   startTimer();
-  goToStep(1);
+  // Показуємо GIF першої вправи
+  showGifOverlay(1, () => goToStep(1));
 }
 
 // ── Navigation ─────────────────────────────
@@ -141,13 +229,17 @@ function goToStep(stepNum) {
 
   STATE.currentStep = stepNum;
 
-  // Прогрес бар
   const pct = (stepNum / STATE.totalSteps) * 100;
   document.getElementById('progress-bar').style.width = `${pct}%`;
   document.getElementById('step-indicator').textContent = `${stepNum} / ${STATE.totalSteps}`;
 
   document.getElementById('screen-training').scrollTo({ top: 0, behavior: 'smooth' });
   vibrate(30);
+}
+
+// ── Кнопка "Наступна вправа" з GIF ─────────
+function goToNextWithGif(nextStep) {
+  showGifOverlay(nextStep, () => goToStep(nextStep));
 }
 
 // ── Checkboxes ─────────────────────────────
@@ -169,7 +261,6 @@ function checkSets(stepNum) {
     }
   });
 
-  // Остання вправа
   if (stepNum === STATE.totalSteps) {
     const btn = document.getElementById('btn-finish');
     btn.disabled = !allChecked;
@@ -212,7 +303,7 @@ function resetApp() {
   stopTimer();
 
   const display = document.getElementById('timer-display');
-  display.textContent = '30:00';
+  display.textContent = '35:00';
   display.classList.remove('warning', 'danger');
 
   document.getElementById('progress-bar').style.width = '20%';
@@ -225,7 +316,6 @@ function resetApp() {
     setItem.querySelector('.set-status').textContent = '⏳';
   });
 
-  // Скидаємо всі кнопки
   for (let i = 1; i <= STATE.totalSteps - 1; i++) {
     const btn = document.getElementById(`btn-next-${i}`);
     if (btn) btn.disabled = true;
