@@ -66,7 +66,7 @@
       <div id="progress-bar" class="progress-bar" style="width: 20%"></div>
     </div>
 
-    <!-- ===== STEP 0 — РОЗМИНКА ===== -->
+    <!-- ===== STEP 1 — РОЗМИНКА ===== -->
     <div id="step-1" class="exercise-card active-step">
       <div class="exercise-header">
         <div class="step-badge warm">00</div>
@@ -74,21 +74,6 @@
           <h2 class="exercise-name">Присід на п'яти з колін</h2>
           <span class="exercise-tag warm-tag">🔥 РОЗМИНКА · Квадрицепс</span>
         </div>
-      </div>
-
-      <!-- GIF демонстрація -->
-      <div class="gif-container">
-        <img 
-          src="https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif" 
-          alt="Присід на п'яти з колін"
-          class="exercise-gif"
-          onerror="this.style.display='none'; document.getElementById('gif-fallback-1').style.display='flex'"
-        />
-        <div id="gif-fallback-1" class="gif-fallback">
-          <span>🧎</span>
-          <p>Стань на коліна → сідай на п'яти → повертайся вгору</p>
-        </div>
-        <div class="gif-badge">ТЕХНІКА</div>
       </div>
 
       <div class="exercise-desc">
@@ -130,12 +115,13 @@
         </div>
       </div>
 
-      <button id="btn-next-1" class="btn-next" disabled onclick="goToNextWithGif(2)">
+      <button id="btn-next-1" class="btn-next" disabled 
+        onclick="goToNextWithGif(2)">
         НАСТУПНА ВПРАВА ➡️
       </button>
     </div>
 
-    <!-- ===== STEP 1 — РУМУНСЬКА ТЯГА ===== -->
+    <!-- ===== STEP 2 — РУМУНСЬКА ТЯГА ===== -->
     <div id="step-2" class="exercise-card hidden-step">
       <div class="exercise-header">
         <div class="step-badge">01</div>
@@ -143,20 +129,6 @@
           <h2 class="exercise-name">Румунська тяга</h2>
           <span class="exercise-tag">Біцепс стегна · Сідниці</span>
         </div>
-      </div>
-
-      <div class="gif-container">
-        <img 
-          src="https://media.giphy.com/media/3o7TKwxYkeW0ZvTqsU/giphy.gif"
-          alt="Румунська тяга"
-          class="exercise-gif"
-          onerror="this.style.display='none'; document.getElementById('gif-fallback-2').style.display='flex'"
-        />
-        <div id="gif-fallback-2" class="gif-fallback">
-          <span>🏋️</span>
-          <p>Спина рівна → нахил вперед → розтяг стегна → повернення</p>
-        </div>
-        <div class="gif-badge">ТЕХНІКА</div>
       </div>
 
       <div class="exercise-desc">
@@ -190,12 +162,13 @@
         </div>
       </div>
 
-      <button id="btn-next-2" class="btn-next" disabled onclick="goToStep(3)">
+      <button id="btn-next-2" class="btn-next" disabled 
+        onclick="goToNextWithGif(3)">
         НАСТУПНА ВПРАВА ➡️
       </button>
     </div>
 
-    <!-- ===== STEP 2 — БОЛГАРСЬКІ ПРИСІДАННЯ ===== -->
+    <!-- ===== STEP 3 — БОЛГАРСЬКІ ПРИСІДАННЯ ===== -->
     <div id="step-3" class="exercise-card hidden-step">
       <div class="exercise-header">
         <div class="step-badge">02</div>
@@ -203,20 +176,6 @@
           <h2 class="exercise-name">Болгарські присідання</h2>
           <span class="exercise-tag">Сідниці · Квадрицепс</span>
         </div>
-      </div>
-
-      <div class="gif-container">
-        <img 
-          src="https://media.giphy.com/media/l0HlKghz8IvrQ8juo/giphy.gif"
-          alt="Болгарські присідання"
-          class="exercise-gif"
-          onerror="this.style.display='none'; document.getElementById('gif-fallback-3').style.display='flex'"
-        />
-        <div id="gif-fallback-3" class="gif-fallback">
-          <span>🦵</span>
-          <p>Задня нога на лаві → присід → коліно не виходить за носок</p>
-        </div>
-        <div class="gif-badge">ТЕХНІКА</div>
       </div>
 
       <div class="exercise-desc">
@@ -250,12 +209,13 @@
         </div>
       </div>
 
-      <button id="btn-next-3" class="btn-next" disabled onclick="goToNextWithGif(4)">
+      <button id="btn-next-3" class="btn-next" disabled 
+        onclick="goToNextWithGif(4)">
         НАСТУПНА ВПРАВА ➡️
       </button>
     </div>
 
-    <!-- ===== STEP 3 — ВИПАДИ ===== -->
+    <!-- ===== STEP 4 — ВИПАДИ ===== -->
     <div id="step-4" class="exercise-card hidden-step">
       <div class="exercise-header">
         <div class="step-badge">03</div>
@@ -263,20 +223,6 @@
           <h2 class="exercise-name">Випади</h2>
           <span class="exercise-tag">Сідниці · Стегна · Баланс</span>
         </div>
-      </div>
-
-      <div class="gif-container">
-        <img 
-          src="https://media.giphy.com/media/l0HlPwMAzh13pcZ20/giphy.gif"
-          alt="Випади"
-          class="exercise-gif"
-          onerror="this.style.display='none'; document.getElementById('gif-fallback-4').style.display='flex'"
-        />
-        <div id="gif-fallback-4" class="gif-fallback">
-          <span>🚶</span>
-          <p>Крок вперед → коліно до підлоги → повернення → інша нога</p>
-        </div>
-        <div class="gif-badge">ТЕХНІКА</div>
       </div>
 
       <div class="exercise-desc">
@@ -310,12 +256,13 @@
         </div>
       </div>
 
-      <button id="btn-next-4" class="btn-next" disabled onclick="goToNextWithGif(5)">
+      <button id="btn-next-4" class="btn-next" disabled 
+        onclick="goToNextWithGif(5)">
         НАСТУПНА ВПРАВА ➡️
       </button>
     </div>
 
-    <!-- ===== STEP 4 — МІСТ ===== -->
+    <!-- ===== STEP 5 — МІСТ ===== -->
     <div id="step-5" class="exercise-card hidden-step">
       <div class="exercise-header">
         <div class="step-badge">04</div>
@@ -323,20 +270,6 @@
           <h2 class="exercise-name">Міст з опором</h2>
           <span class="exercise-tag">Сідниці · Біцепс стегна</span>
         </div>
-      </div>
-
-      <div class="gif-container">
-        <img 
-          src="https://media.giphy.com/media/l0HlNQ03J5JxX6lva/giphy.gif"
-          alt="Міст з опором"
-          class="exercise-gif"
-          onerror="this.style.display='none'; document.getElementById('gif-fallback-5').style.display='flex'"
-        />
-        <div id="gif-fallback-5" class="gif-fallback">
-          <span>🌉</span>
-          <p>Ляж на спину → стопи на підлозі → підніми таз вгору → стисни сідниці</p>
-        </div>
-        <div class="gif-badge">ТЕХНІКА</div>
       </div>
 
       <div class="exercise-desc">
@@ -374,11 +307,31 @@
         </div>
       </div>
 
-      <button id="btn-finish" class="btn-finish" disabled onclick="goToNextWithGif()">
+      <button id="btn-finish" class="btn-finish" disabled onclick="finishWorkout()">
         ЗАВЕРШИТИ ТРЕНУВАННЯ 🏁
       </button>
     </div>
 
+  </div>
+
+  <!-- ========== GIF OVERLAY ========== -->
+  <div id="gif-overlay" class="gif-overlay hidden">
+    <div class="gif-overlay-content">
+      <div class="gif-overlay-name" id="overlay-exercise-name"></div>
+      <div class="gif-overlay-img-wrap">
+        <img id="overlay-gif" src="" alt="" class="gif-overlay-img" />
+        <div id="overlay-fallback" class="overlay-fallback hidden">
+          <span id="overlay-emoji">🏋️</span>
+          <p id="overlay-desc"></p>
+        </div>
+      </div>
+      <div class="gif-overlay-timer">
+        <div class="overlay-timer-bar-wrap">
+          <div id="overlay-timer-bar" class="overlay-timer-bar"></div>
+        </div>
+        <p class="overlay-tap-hint">👆 ТАП ЩОБ ПОЧАТИ</p>
+      </div>
+    </div>
   </div>
 
   <!-- ========== FINISH SCREEN ========== -->
@@ -418,25 +371,6 @@
     </div>
   </div>
 
-  <!-- ========== GIF OVERLAY ========== -->
-<div id="gif-overlay" class="gif-overlay hidden">
-  <div class="gif-overlay-content">
-    <div class="gif-overlay-name" id="overlay-exercise-name"></div>
-    <div class="gif-overlay-img-wrap">
-      <img id="overlay-gif" src="" alt="" class="gif-overlay-img" />
-      <div id="overlay-fallback" class="overlay-fallback hidden">
-        <span id="overlay-emoji">🏋️</span>
-        <p id="overlay-desc"></p>
-      </div>
-    </div>
-    <div class="gif-overlay-timer">
-      <div class="overlay-timer-bar-wrap">
-        <div id="overlay-timer-bar" class="overlay-timer-bar"></div>
-      </div>
-      <p class="overlay-tap-hint">👆 ТАП ЩОБ ПОЧАТИ</p>
-    </div>
-  </div>
-</div>
   <script src="app.js"></script>
 </body>
 </html>
