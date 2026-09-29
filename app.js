@@ -1,18 +1,18 @@
 /* ============================================
-   HARLEY FITNESS TRACKER — app.js
+   HARLEY FITNESS TRACKER — app.js v2.0
    ============================================ */
 
-// ── State ──────────────────────────────────
 const STATE = {
   timerInterval: null,
-  totalSeconds:  30 * 60,   // 30 minutes
+  totalSeconds:  30 * 60,
   secondsLeft:   30 * 60,
   startTime:     null,
   currentStep:   1,
   finished:      false,
+  totalSteps:    5,
 };
 
-// ── Telegram Web App Init ──────────────────
+// ── Telegram Init ──────────────────────────
 (function initTelegram() {
   if (window.Telegram?.WebApp) {
     const tg = window.Telegram.WebApp;
@@ -39,6 +39,51 @@ function vibrate(pattern) {
   if (navigator.vibrate) navigator.vibrate(pattern);
 }
 
+// ── Звук фінішу ────────────────────────────
+function playFinishSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const signals = [
+      { freq: 523, start: 0,    duration: 0.3 },
+      { freq: 659, start: 0.4,  duration: 0.3 },
+      { freq: 784, start: 0.8,  duration: 0.3 },
+      { freq: 1047, start: 1.2, duration: 0.8 },
+    ];
+    signals.forEach(({ freq, start, duration }) => {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0, ctx.currentTime + start);
+      gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + start + 0.05);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + start + duration);
+      osc.start(ctx.currentTime + start);
+      osc.stop(ctx.currentTime + start + duration + 0.1);
+    });
+  } catch (e) {
+    console.log('Звук недоступний:', e);
+  }
+}
+
+// ── Звук чекбокса ──────────────────────────
+function playCheckSound() {
+  try {
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.15);
+  } catch (e) {}
+}
+
 // ── Timer ──────────────────────────────────
 function startTimer() {
   STATE.startTime   = Date.now();
@@ -46,18 +91,20 @@ function startTimer() {
 
   STATE.timerInterval = setInterval(() => {
     STATE.secondsLeft--;
-
     const display = document.getElementById('timer-display');
     display.textContent = formatTime(STATE.secondsLeft);
 
-    // Color states
     display.classList.remove('warning', 'danger');
     if (STATE.secondsLeft <= 60)       display.classList.add('danger');
     else if (STATE.secondsLeft <= 300) display.classList.add('warning');
 
     if (STATE.secondsLeft <= 0) {
       clearInterval(STATE.timerInterval);
-      if (!STATE.finished) finishWorkout(true);
+      if (!STATE.finished) {
+        playFinishSound();
+        vibrate([200, 100, 200, 100, 400]);
+        finishWorkout(true);
+      }
     }
   }, 1000);
 }
@@ -71,7 +118,7 @@ function getElapsedMinutes() {
   return Math.max(1, Math.round(elapsed / 60));
 }
 
-// ── Start Workout ──────────────────────────
+// ── Start ──────────────────────────────────
 function startWorkout() {
   vibrate([50, 30, 50]);
   showScreen('screen-training');
@@ -79,15 +126,13 @@ function startWorkout() {
   goToStep(1);
 }
 
-// ── Step Navigation ────────────────────────
+// ── Navigation ─────────────────────────────
 function goToStep(stepNum) {
-  // Hide all steps
   document.querySelectorAll('.exercise-card').forEach(card => {
     card.classList.remove('active-step');
     card.classList.add('hidden-step');
   });
 
-  // Show target step
   const target = document.getElementById(`step-${stepNum}`);
   if (target) {
     target.classList.remove('hidden-step');
@@ -96,32 +141,27 @@ function goToStep(stepNum) {
 
   STATE.currentStep = stepNum;
 
-  // Update progress bar & indicator
-  const progressMap = { 1: '33%', 2: '66%', 3: '100%' };
-  document.getElementById('progress-bar').style.width = progressMap[stepNum] || '33%';
-  document.getElementById('step-indicator').textContent = `${stepNum} / 3`;
+  // Прогрес бар
+  const pct = (stepNum / STATE.totalSteps) * 100;
+  document.getElementById('progress-bar').style.width = `${pct}%`;
+  document.getElementById('step-indicator').textContent = `${stepNum} / ${STATE.totalSteps}`;
 
-  // Scroll to top of training screen
   document.getElementById('screen-training').scrollTo({ top: 0, behavior: 'smooth' });
-
   vibrate(30);
 }
 
-// ── Checkbox Logic ─────────────────────────
+// ── Checkboxes ─────────────────────────────
 function checkSets(stepNum) {
-  const checkboxes = document.querySelectorAll(
-    `#step-${stepNum} .set-checkbox`
-  );
+  const checkboxes = document.querySelectorAll(`#step-${stepNum} .set-checkbox`);
   const allChecked = Array.from(checkboxes).every(cb => cb.checked);
 
-  // Update visual state for each set item
-  checkboxes.forEach((cb, idx) => {
-    const setItem = cb.closest('.set-item');
+  checkboxes.forEach(cb => {
+    const setItem  = cb.closest('.set-item');
     const statusEl = setItem.querySelector('.set-status');
-
     if (cb.checked) {
       setItem.classList.add('completed');
       statusEl.textContent = '✅';
+      playCheckSound();
       vibrate(20);
     } else {
       setItem.classList.remove('completed');
@@ -129,62 +169,55 @@ function checkSets(stepNum) {
     }
   });
 
-  // Unlock next/finish button
-  if (stepNum === 3) {
+  // Остання вправа
+  if (stepNum === STATE.totalSteps) {
     const btn = document.getElementById('btn-finish');
     btn.disabled = !allChecked;
-    if (allChecked) {
-      btn.style.animation = 'pulseGlow 1.5s ease-in-out infinite';
-      vibrate([50, 30, 100]);
-    }
+    if (allChecked) vibrate([50, 30, 100]);
   } else {
     const btn = document.getElementById(`btn-next-${stepNum}`);
-    btn.disabled = !allChecked;
-    if (allChecked) vibrate([50, 30, 100]);
+    if (btn) {
+      btn.disabled = !allChecked;
+      if (allChecked) vibrate([50, 30, 100]);
+    }
   }
 }
 
-// ── Finish Workout ─────────────────────────
+// ── Finish ─────────────────────────────────
 function finishWorkout(timerExpired = false) {
   if (STATE.finished) return;
   STATE.finished = true;
-
   stopTimer();
+  playFinishSound();
   vibrate([100, 50, 100, 50, 200]);
 
   const minutes = getElapsedMinutes();
   document.getElementById('finish-time').textContent = minutes;
-
   showScreen('screen-finish');
 
-  // Notify Telegram (optional)
   if (window.Telegram?.WebApp) {
     window.Telegram.WebApp.showPopup({
-      title: '🏆 Workout Complete!',
-      message: `Mission accomplished, HARLEY! Completed in ${minutes} min.`,
+      title: '🏆 Тренування завершено!',
+      message: `Місія виконана, HARLEY! Завершено за ${minutes} хв.`,
       buttons: [{ type: 'ok' }]
     });
   }
 }
 
-// ── Reset App ──────────────────────────────
+// ── Reset ──────────────────────────────────
 function resetApp() {
-  // Reset state
   STATE.secondsLeft = STATE.totalSeconds;
   STATE.currentStep = 1;
   STATE.finished    = false;
   stopTimer();
 
-  // Reset timer display
   const display = document.getElementById('timer-display');
   display.textContent = '30:00';
   display.classList.remove('warning', 'danger');
 
-  // Reset progress
-  document.getElementById('progress-bar').style.width = '33%';
-  document.getElementById('step-indicator').textContent = '1 / 3';
+  document.getElementById('progress-bar').style.width = '20%';
+  document.getElementById('step-indicator').textContent = '1 / 5';
 
-  // Reset all checkboxes
   document.querySelectorAll('.set-checkbox').forEach(cb => {
     cb.checked = false;
     const setItem = cb.closest('.set-item');
@@ -192,14 +225,13 @@ function resetApp() {
     setItem.querySelector('.set-status').textContent = '⏳';
   });
 
-  // Reset all buttons
-  ['btn-next-1', 'btn-next-2', 'btn-finish'].forEach(id => {
-    const btn = document.getElementById(id);
-    if (btn) {
-      btn.disabled = true;
-      btn.style.animation = '';
-    }
-  });
+  // Скидаємо всі кнопки
+  for (let i = 1; i <= STATE.totalSteps - 1; i++) {
+    const btn = document.getElementById(`btn-next-${i}`);
+    if (btn) btn.disabled = true;
+  }
+  const finBtn = document.getElementById('btn-finish');
+  if (finBtn) finBtn.disabled = true;
 
   showScreen('screen-welcome');
 }
