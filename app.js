@@ -142,7 +142,6 @@ function showGifOverlay(stepNum, callback) {
 
   // Закрити через 5 сек або по тапу
   function closeOverlay() {
-    clearTimeout(STATE.overlayTimeout);
     overlay.removeEventListener('click', closeOverlay);
     overlay.classList.add('hidden');
     video.pause();
@@ -150,7 +149,6 @@ function showGifOverlay(stepNum, callback) {
     callback();
   }
 
-  STATE.overlayTimeout = setTimeout(closeOverlay, 15000);
   overlay.addEventListener('click', closeOverlay);
 }
 
