@@ -19,31 +19,31 @@ const EXERCISES = {
     name:  'Присід на п\'яти з колін',
     emoji: '🧎',
     desc:  'Стань на коліна → сідай на п\'яти → повертайся вгору',
-    gif:   'https://i.imgur.com/LmVxS5V.gif',
+    video: 'kneeling-squat.mp4',
   },
   2: {
     name:  'Румунська тяга',
     emoji: '🏋️',
     desc:  'Спина рівна → нахил вперед → розтяг стегна → повернення',
-    gif:   'https://i.imgur.com/8Yk3mAn.gif',
+    video: 'romanian-deadlift.mp4',
   },
   3: {
     name:  'Болгарські присідання',
     emoji: '🦵',
     desc:  'Задня нога на лаві → присід → коліно не виходить за носок',
-    gif:   'https://i.imgur.com/QwZXkPl.gif',
+    video: 'bulgarian-split-squat.mp4',
   },
   4: {
     name:  'Випади',
     emoji: '🚶',
     desc:  'Крок вперед → коліно до підлоги → повернення → інша нога',
-    gif:   'https://i.imgur.com/RtNpKjH.gif',
+    video: 'walking-lunges.mp4',
   },
   5: {
     name:  'Міст з опором',
     emoji: '🌉',
     desc:  'Ляж на спину → стопи на підлозі → підніми таз → стисни сідниці',
-    gif:   'https://i.imgur.com/VxKpLmN.gif',
+    video: 'glute-bridge.mp4',
   },
 };
 
